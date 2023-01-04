@@ -15,7 +15,7 @@ df <- mutate(df, `marital-status` = ifelse(`marital-status` == "Married-civ-spou
 
 
 
-columns_to_encode <- c("workclass","education","occupation","race","gender")
+columns_to_encode <- c("workclass","education","occupation","race","gender","income")
 
 df |> group_by(!!rlang::sym(c("education"))) |> summarize(count = n())
 one_hot <- function(bool){
@@ -45,14 +45,6 @@ df_for_dectree <- select(df, -age,-workclass,-fnlwgt,-education,-`educational-nu
 df_for_dectree
 #mutate(df, across(16:61, one_hot))
 
-
-mutate(df, "hi" = 5)
-df
-
-head(df)
-#group_by(df,romantic) |> summarize(count = n())
-#132/395
-
 split <- initial_split(df_for_dectree, prop=0.75, strata = `marital-status`)
 df_train <- training(split)
 df_train
@@ -62,28 +54,3 @@ df_test
 write_delim(df, file = "student-mat-clean.csv",delim = ",")
 write_delim(df_train, file = "adult-one-hot-train.csv",delim = ",")
 write_delim(df_test, file = "adult-one-hot-test.csv",delim = ",")
-
-# For decision tree, categorical
-df_2 <- select(df_init, romantic, freetime, studytime, higher, famrel, traveltime, Pstatus, goout, G3, activities, health)
-df_2 <- mutate(df_2, romantic = ifelse(romantic == "yes", 1, 0))
-df_2 <- mutate(df_2, higher = ifelse(higher == "yes", 1, 0))
-df_2 <- mutate(df_2, activities = ifelse(activities == "yes", 1, 0))
-df_2 <- mutate(df_2, Pstatus = ifelse(Pstatus == "T", 1, 0))
-df_2
-df_2 <- mutate(df_2, across(everything(), as.character))
-
-df_2 |> filter()
-
-split_2 <- initial_split(df_2, prop=0.75, strata = romantic)
-df_train_2 <- training(split_2)
-df_train_2
-df_test_2 <- testing(split_2)
-df_test_2
-
-write_delim(df_2, file = "student/student-mat-clean-dt.csv",delim = ",")
-write_delim(df_test_2, file = "student/student-mat-clean-dt-test.csv",delim = ",")
-write_delim(df_train_2, file = "student/student-mat-clean-dt-train.csv",delim = ",")
-
-ggplot(df,aes(x = G3, color = as.factor(romantic))) +
-  geom_histogram() +
-  labs(x = "Grades/20 (higher = better)", y = "Count", color = "Has a romantic relationship? 0 = no")
