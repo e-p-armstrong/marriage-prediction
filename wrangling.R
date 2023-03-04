@@ -2,14 +2,9 @@ library(tidyverse)
 library(tidymodels)
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-# Data source: https://archive.ics.uci.edu/ml/datasets/student+performance
 df_init <- read_delim("adult.csv",delim=",")
 head(df_init)
 df <- df_init
-#df <- select(df_init, romantic, freetime, goout, G3,)
-#filter(df, romantic == "yes") # There's a good number of normies, ~ 1/3. Aim 
-                              # for above 75% accuracy.
-                              # G3 is out of 20
 
 df <- mutate(df, `marital-status` = ifelse(`marital-status` == "Married-civ-spouse", 1, 0))
 
@@ -43,7 +38,6 @@ for (column in columns_to_encode){
 df
 df_for_dectree <- select(df, -age,-workclass,-fnlwgt,-education,-`educational-num`,-occupation,-relationship,-`capital-gain`,-`capital-loss`,-`hours-per-week`,-`native-country`,-`income`,-`race`,-`gender`)
 df_for_dectree
-#mutate(df, across(16:61, one_hot))
 
 split <- initial_split(df_for_dectree, prop=0.75, strata = `marital-status`)
 df_train <- training(split)
